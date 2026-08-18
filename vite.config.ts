@@ -1,12 +1,36 @@
 import { vlyPlugin } from "@vly-ai/integrations";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), vlyPlugin(), tailwindcss()],
+  plugins: [
+    react(),
+    vlyPlugin(),
+    tailwindcss(),
+    VitePWA({
+      registerType: "autoUpdate",
+      includeAssets: ["icons/icon.svg", "icons/icon-*.png"],
+      manifest: false, // use public/manifest.webmanifest
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\.convex\.cloud\/.*/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "convex-api",
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 },
+            },
+          },
+        ],
+      },
+      devOptions: { enabled: false },
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
