@@ -1,7 +1,7 @@
 {
-  "name": "AURA — Habit Dashboard",
-  "short_name": "AURA",
-  "description": "Build habits that compound over time. Track daily tasks, visualize progress, and grow your streaks.",
+  "name": "Mad Productive Studio",
+  "short_name": "Mad Productive",
+  "description": "A clean, serious habit tracker that helps you stay consistent. Track daily tasks, visualize your progress, and build lasting streaks.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -10,67 +10,21 @@
   "theme_color": "#2c2418",
   "categories": ["productivity", "lifestyle", "health"],
   "icons": [
-    {
-      "src": "/icons/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "/icons/icon-72.png", "sizes": "72x72", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "screenshots": [],
   "shortcuts": [
     {
-      "name": "Go to Dashboard",
+      "name": "Open Dashboard",
       "short_name": "Dashboard",
       "url": "/dashboard",
-      "icons": [
-        {
-          "src": "/icons/icon-96.png",
-          "sizes": "96x96"
-        }
-      ]
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     }
   ]
 }

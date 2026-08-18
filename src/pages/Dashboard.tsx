@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useNavigate } from "react-router";
-import { LogOut, Calendar, Target, Flame, Gauge, Sparkles, ClipboardList, Plus, Trash2, Check, RotateCcw } from "lucide-react";
+import { LogOut, Calendar, Target, Flame, Gauge, Sparkles, ClipboardList, Plus, Trash2, Check, RotateCcw, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -43,7 +43,7 @@ const PRIORITY_STYLES: Record<string, { bg: string; text: string; label: string 
 /* -------------------------------------------------------------------------- */
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   const today = toLocalDateStr(new Date());
   const [activeDate, setActiveDate] = useState(today);
@@ -119,7 +119,6 @@ export default function Dashboard() {
 
   // Stats: streak, monthly average, insight
   const { streak, monthlyAvg, insight } = useMemo(() => {
-    // Monthly average
     const activeDays = Object.keys(tasksByDate).length;
     let sum = 0;
     for (const tasks of Object.values(tasksByDate)) {
@@ -128,7 +127,6 @@ export default function Dashboard() {
     }
     const avg = activeDays === 0 ? 0 : Math.round(sum / activeDays);
 
-    // Streak (consecutive days with >= 50% completion, counting back from today)
     let streakCount = 0;
     const checkDate = new Date();
     while (true) {
@@ -142,24 +140,19 @@ export default function Dashboard() {
           break;
         }
       } else {
-        if (checkStr === today) {
-          // skip today if empty
-        } else {
-          break;
-        }
+        if (checkStr !== today) break;
       }
       checkDate.setDate(checkDate.getDate() - 1);
       if (streakCount > 365) break;
     }
 
-    // Insight
     let insightText = "Add your first task to begin tracking.";
     if (activeDays > 0 && avg > 75) {
-      insightText = `Excellent consistency! Your average is ${avg}%. Keep it up.`;
+      insightText = `Excellent consistency — your average is ${avg}%. Keep it up.`;
     } else if (activeDays > 0 && avg > 40) {
-      insightText = `Good progress. Try tackling high-priority tasks earlier in the day.`;
+      insightText = "Good progress. Try tackling high-priority tasks earlier in the day.";
     } else if (activeDays > 0) {
-      insightText = `Let's build momentum — complete at least one task today.`;
+      insightText = "Let's build momentum — complete at least one task today.";
     }
 
     return { streak: streakCount, monthlyAvg: avg, insight: insightText };
@@ -174,14 +167,16 @@ export default function Dashboard() {
   }, [taskInput, activeDate, priority, addTask]);
 
   const handleToggle = useCallback(
-    async (taskId: Id<"tasks">) => {
+    async (e: React.MouseEvent, taskId: Id<"tasks">) => {
+      e.stopPropagation();
       await toggleTask({ taskId });
     },
     [toggleTask]
   );
 
   const handleDelete = useCallback(
-    async (taskId: Id<"tasks">) => {
+    async (e: React.MouseEvent, taskId: Id<"tasks">) => {
+      e.stopPropagation();
       await removeTask({ taskId });
     },
     [removeTask]
@@ -200,7 +195,6 @@ export default function Dashboard() {
 
   const goToToday = useCallback(() => setActiveDate(today), [today]);
 
-  // Set initial date
   useEffect(() => {
     setActiveDate(toLocalDateStr(new Date()));
   }, []);
@@ -215,12 +209,12 @@ export default function Dashboard() {
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <header className="h-14 flex items-center justify-between px-5 border-b shrink-0" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
         <div className="flex items-center gap-2.5">
-          <div className="p-1.5 rounded-lg" style={{ background: "var(--secondary)" }}>
-            <Target className="w-4 h-4" style={{ color: "var(--ring)" }} />
+          <div className="p-1.5 rounded-lg" style={{ background: "var(--primary)" }}>
+            <Target className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h1 className="font-bold text-[14px] leading-none tracking-wide" style={{ color: "var(--foreground)" }}>AURA</h1>
-            <p className="text-[9px] font-medium tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>Habit Dashboard</p>
+            <h1 className="font-extrabold text-[14px] leading-none tracking-tight" style={{ color: "var(--foreground)" }}>Mad Productive</h1>
+            <p className="text-[9px] font-semibold tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>Studio</p>
           </div>
         </div>
 
@@ -265,7 +259,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-2.5 shrink-0">
               <div>
                 <h2 className="text-[13px] font-bold" style={{ color: "var(--foreground)" }}>{displayDateText}</h2>
-                <p className="text-[10px] font-medium" style={{ color: "var(--muted-foreground)" }}>Manage your daily action items</p>
+                <p className="text-[10px] font-medium" style={{ color: "var(--muted-foreground)" }}>Your daily action items</p>
               </div>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ color: "var(--muted-foreground)", background: "var(--secondary)" }}>
                 {completedCount}/{totalCount}
@@ -307,7 +301,7 @@ export default function Dashboard() {
               {totalCount === 0 && (
                 <div className="flex flex-col items-center justify-center py-10 border border-dashed rounded-xl" style={{ borderColor: "var(--border)" }}>
                   <ClipboardList className="w-6 h-6 mb-2" style={{ color: "var(--muted-foreground)", opacity: 0.4 }} />
-                  <p className="text-[11px] font-medium" style={{ color: "var(--muted-foreground)" }}>No tasks yet. Add one above.</p>
+                  <p className="text-[11px] font-medium" style={{ color: "var(--muted-foreground)" }}>No tasks yet — add one above to get started.</p>
                 </div>
               )}
               <ul className="space-y-1.5">
@@ -319,21 +313,22 @@ export default function Dashboard() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.18 }}
-                      className="flex items-center justify-between p-2 rounded-lg border transition"
+                      className="group flex items-center justify-between p-2 rounded-lg border transition cursor-pointer hover:shadow-sm"
                       style={{
                         borderColor: "var(--border)",
                         background: "var(--card)",
                         opacity: task.completed ? 0.55 : 1,
                       }}
+                      onClick={() => navigate(`/dashboard/${task._id}`)}
                     >
                       <div className="flex items-center gap-2.5 flex-1 min-w-0">
                         <button
-                          onClick={() => handleToggle(task._id)}
+                          onClick={(e) => handleToggle(e, task._id)}
                           className="w-5 h-5 shrink-0 flex items-center justify-center rounded-md border-2 transition"
                           style={{
                             borderColor: task.completed ? "var(--primary)" : "var(--border)",
                             background: task.completed ? "var(--primary)" : "transparent",
-                            color: task.completed ? "var(--primary-foreground)" : "transparent",
+                            color: task.completed ? "white" : "transparent",
                           }}
                         >
                           <Check className="w-3 h-3" />
@@ -352,8 +347,9 @@ export default function Dashboard() {
                         <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${PRIORITY_STYLES[task.priority].bg} ${PRIORITY_STYLES[task.priority].text}`}>
                           {PRIORITY_STYLES[task.priority].label}
                         </span>
+                        <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-60 transition" style={{ color: "var(--muted-foreground)" }} />
                         <button
-                          onClick={() => handleDelete(task._id)}
+                          onClick={(e) => handleDelete(e, task._id)}
                           className="transition hover:opacity-70"
                           style={{ color: "var(--muted-foreground)" }}
                         >
@@ -369,7 +365,7 @@ export default function Dashboard() {
 
           {/* PIE CHART PANEL */}
           <section className="w-1/3 p-4 flex flex-col items-center justify-center">
-            <h2 className="text-[13px] font-bold mb-0.5" style={{ color: "var(--foreground)" }}>Today&apos;s Progress</h2>
+            <h2 className="text-[13px] font-bold mb-0.5" style={{ color: "var(--foreground)" }}>Today&apos;s progress</h2>
             <p className="text-[10px] font-medium mb-3" style={{ color: "var(--muted-foreground)" }}>Live completion rate</p>
 
             <div className="relative w-36 h-36 flex items-center justify-center">
@@ -426,7 +422,7 @@ export default function Dashboard() {
           <section className="w-2/3 p-4 flex flex-col border-r" style={{ borderColor: "var(--border)" }}>
             <div className="flex justify-between items-start mb-2 shrink-0">
               <div>
-                <h2 className="text-[13px] font-bold" style={{ color: "var(--foreground)" }}>Monthly Progress</h2>
+                <h2 className="text-[13px] font-bold" style={{ color: "var(--foreground)" }}>Monthly progress</h2>
                 <p className="text-[10px] font-medium" style={{ color: "var(--muted-foreground)" }}>Daily completion trend this month</p>
               </div>
             </div>
@@ -499,19 +495,19 @@ export default function Dashboard() {
             {/* Month Average */}
             <div className="rounded-lg p-2.5 flex items-center justify-between border" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-md" style={{ background: "var(--secondary)" }}>
-                  <Gauge className="w-3.5 h-3.5" style={{ color: "var(--ring)" }} />
+                <div className="p-1.5 rounded-md" style={{ background: "oklch(0.94 0.02 265)" }}>
+                  <Gauge className="w-3.5 h-3.5" style={{ color: "var(--primary)" }} />
                 </div>
                 <div>
-                  <p className="text-[9px] uppercase tracking-widest font-bold" style={{ color: "var(--muted-foreground)" }}>Month Avg</p>
+                  <p className="text-[9px] uppercase tracking-widest font-bold" style={{ color: "var(--muted-foreground)" }}>Month avg</p>
                   <h4 className="text-[13px] font-bold" style={{ color: "var(--foreground)" }}>{monthlyAvg}%</h4>
                 </div>
               </div>
             </div>
 
             {/* Insight */}
-            <div className="rounded-lg p-2.5 border" style={{ borderColor: "oklch(0.88 0.01 60)", background: "oklch(0.97 0.006 60)" }}>
-              <p className="text-[11px] font-bold flex items-center gap-1 mb-1" style={{ color: "oklch(0.45 0.08 50)" }}>
+            <div className="rounded-lg p-2.5 border" style={{ borderColor: "oklch(0.88 0.02 265)", background: "oklch(0.96 0.015 265)" }}>
+              <p className="text-[11px] font-bold flex items-center gap-1 mb-1" style={{ color: "var(--primary)" }}>
                 <Sparkles className="w-3 h-3" /> Insight
               </p>
               <p className="text-[10px] leading-relaxed" style={{ color: "var(--muted-foreground)" }}>

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/input-otp";
 
 import { useAuth } from "@/hooks/use-auth";
-import logo from "@/assets/logo.svg";
 import { ArrowRight, Loader2, Mail, UserX, Target } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -79,16 +78,11 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     try {
       const formData = new FormData(event.currentTarget);
       await signIn("email-otp", formData);
-
-      console.log("signed in");
-
       navigate(redirect);
     } catch (error) {
       console.error("OTP verification error:", error);
-
       setError("The verification code you entered is incorrect.");
       setIsLoading(false);
-
       setOtp("");
     }
   };
@@ -97,22 +91,18 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     setIsLoading(true);
     setError(null);
     try {
-      console.log("Attempting anonymous sign in...");
       await signIn("anonymous");
-      console.log("Anonymous sign in successful");
       navigate(redirect);
     } catch (error) {
       console.error("Guest login error:", error);
-      console.error("Error details:", JSON.stringify(error, null, 2));
       setError(`Failed to sign in as guest: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--background)" }}>
 
-      
       {/* Auth Content */}
       <div className="flex-1 flex items-center justify-center">
         <div className="flex items-center justify-center h-full flex-col">
@@ -121,21 +111,21 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
             <>
               <CardHeader className="text-center">
               <div className="flex justify-center">
-                    <div className="flex items-center gap-2 mb-4 mt-4 cursor-pointer" onClick={() => navigate("/")}>
-                      <div className="p-2 rounded-lg" style={{ background: "var(--secondary)" }}>
-                        <Target className="w-5 h-5" style={{ color: "var(--ring)" }} />
+                    <div className="flex items-center gap-2.5 mb-4 mt-4 cursor-pointer" onClick={() => navigate("/")}>
+                      <div className="p-2 rounded-lg" style={{ background: "var(--primary)" }}>
+                        <Target className="w-4 h-4 text-white" />
                       </div>
-                      <span className="font-bold text-sm tracking-wide" style={{ color: "var(--foreground)" }}>AURA</span>
+                      <span className="font-extrabold text-sm tracking-tight" style={{ color: "var(--foreground)" }}>Mad Productive</span>
                     </div>
                   </div>
-                <CardTitle className="text-xl">Get Started</CardTitle>
+                <CardTitle className="text-xl">Get started</CardTitle>
                 <CardDescription>
-                  Enter your email to log in or sign up
+                  Enter your email to sign in or create an account
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleEmailSubmit}>
                 <CardContent>
-                  
+
                   <div className="relative flex items-center gap-2">
                     <div className="relative flex-1">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -164,7 +154,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   {error && (
                     <p className="mt-2 text-sm text-red-500">{error}</p>
                   )}
-                  
+
                   <div className="mt-4">
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
@@ -176,7 +166,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         </span>
                       </div>
                     </div>
-                    
+
                     <Button
                       type="button"
                       variant="outline"
@@ -185,7 +175,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       disabled={isLoading}
                     >
                       <UserX className="mr-2 h-4 w-4" />
-                      Continue as Guest
+                      Continue as guest
                     </Button>
                   </div>
                 </CardContent>
@@ -196,7 +186,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
               <CardHeader className="text-center mt-4">
                 <CardTitle>Check your email</CardTitle>
                 <CardDescription>
-                  We've sent a code to {step.email}
+                  We&apos;ve sent a verification code to {step.email}
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleOtpSubmit}>
@@ -212,7 +202,6 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       disabled={isLoading}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && otp.length === 6 && !isLoading) {
-                          // Find the closest form and submit it
                           const form = (e.target as HTMLElement).closest("form");
                           if (form) {
                             form.requestSubmit();
@@ -233,7 +222,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     </p>
                   )}
                   <p className="text-sm text-muted-foreground text-center mt-4">
-                    Didn't receive a code?{" "}
+                    Didn&apos;t receive a code?{" "}
                     <Button
                       variant="link"
                       className="p-0 h-auto"
